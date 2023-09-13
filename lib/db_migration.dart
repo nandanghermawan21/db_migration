@@ -11,9 +11,15 @@ import 'package:sqflite/sqflite.dart';
 
 class Databases {
   String dbName = "DataBase";
-  String? dbMigrationAssets = "dbmigration";
+  String dbMigrationAssets = "dbmigration";
   Database? db;
   int? version;
+
+  Databases({
+    required this.dbName,
+    required this.dbMigrationAssets,
+    this.version,
+  });
 
   // return the path
   Future<String> checkDb(String dbName, {bool deleteOldDb = false}) async {
@@ -38,16 +44,17 @@ class Databases {
   }
 
   Future<Databases> initializeDb({
-    String? dbName,
-    String? dbMigrationAssets,
     bool deleteOldDb = false,
     Function(Database?, int)? onCreate,
   }) async {
     String path =
-        await checkDb(dbName ?? this.dbName, deleteOldDb: deleteOldDb);
+        await checkDb(dbName, deleteOldDb: deleteOldDb);
     db = await openDatabase(path);
     db?.getVersion().then((version) {
       version = version;
+      debugPrint("Database information :");
+      debugPrint("path                 : ${db?.path}");
+      debugPrint("current version      : $version");
       if (onCreate != null) {
         onCreate(db, version);
       }
@@ -104,7 +111,7 @@ class Databases {
           });
         });
       });
-      debugPrint("update is uptodate");
+      debugPrint("database is uptodate");
     }
   }
 }
