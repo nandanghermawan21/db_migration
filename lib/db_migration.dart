@@ -10,14 +10,14 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Databases {
-  String dbName = "DataBase";
-  String dbMigrationAssets = "dbmigration";
+  String? dbName = "DataBase";
+  String? dbMigrationAssets = "dbmigration";
   Database? db;
   int? version;
 
   Databases({
-    required this.dbName,
-    required this.dbMigrationAssets,
+    this.dbName,
+    this.dbMigrationAssets,
     this.version,
   });
 
