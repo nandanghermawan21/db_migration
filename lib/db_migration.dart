@@ -104,13 +104,13 @@ class Databases {
         .where((String key) => key.contains('.sql'))
         .toList();
 
-    imagePaths.forEach((element) {
+    for (var element in imagePaths) {
       String fileName = element.split('/').last.split('.').first;
 
       if (int.parse(fileName.split('v').last) > latestVersion) {
         latestVersion = int.parse(fileName.split('v').last);
       }
-    });
+    }
 
     for (int i = version; i < latestVersion; i++) {
       rootBundle.loadString("$dbMigrationAssets/dbv${i + 1}.sql").then((sql) {
