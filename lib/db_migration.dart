@@ -1,6 +1,7 @@
 library db_migration;
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'dart:io';
 
@@ -47,8 +48,7 @@ class Databases {
     bool deleteOldDb = false,
     Function(Database?, int)? onCreate,
   }) async {
-    String path =
-        await checkDb(dbName, deleteOldDb: deleteOldDb);
+    String path = await checkDb(dbName, deleteOldDb: deleteOldDb);
     db = await openDatabase(path);
     db?.getVersion().then((version) {
       version = version;
@@ -92,19 +92,28 @@ class Databases {
   Future<void> startMigration(int version) async {
     //read version tertinggi dari migration
     var latestVersion = 0;
-    final migrationDir = await rootBundle.load('$dbMigrationAssets/');
-    final migrationContent =
-        String.fromCharCodes(migrationDir.buffer.asUint8List());
 
-    final migrations = migrationContent.split('\n');
-    for (final migration in migrations) {
-      if (int.parse(migration.split('v').last) > latestVersion) {
-        latestVersion = int.parse(migration.split('v').last);
+    // >> To get paths you need these 2 lines
+    final manifestContent = await rootBundle.loadString('AssetManifest.json');
+
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+    // >> To get paths you need these 2 lines
+
+    final imagePaths = manifestMap.keys
+        .where((String key) => key.contains('$dbMigrationAssets/'))
+        .where((String key) => key.contains('.sql'))
+        .toList();
+
+    imagePaths.forEach((element) {
+      String fileName = element.split('/').last.split('.').first;
+
+      if (int.parse(fileName.split('v').last) > latestVersion) {
+        latestVersion = int.parse(fileName.split('v').last);
       }
-    }
+    });
 
     for (int i = version; i < latestVersion; i++) {
-      rootBundle.loadString("dbmigration/dbv${i + 1}.sql").then((sql) {
+      rootBundle.loadString("$dbMigrationAssets/dbv${i + 1}.sql").then((sql) {
         db?.execute(sql).then((v) {
           db?.setVersion(i + 1).then((v) {
             debugPrint("update to version ${i + 1}");
