@@ -107,8 +107,12 @@ class Databases {
     for (var element in imagePaths) {
       String fileName = element.split('/').last.split('.').first;
 
-      if (int.parse(fileName.split('v').last) > latestVersion) {
-        latestVersion = int.parse(fileName.split('v').last);
+      try {
+        if (int.parse(fileName.split('v').last) > latestVersion) {
+          latestVersion = int.parse(fileName.split('v').last);
+        }
+      } catch (e) {
+        debugPrint("filena name $fileName not valid");
       }
     }
 
