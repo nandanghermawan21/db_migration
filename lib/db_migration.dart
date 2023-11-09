@@ -127,4 +127,14 @@ class Databases {
       debugPrint("database is uptodate");
     }
   }
+
+  String remapQueryFromJsonToSql(String sql, Map<String, dynamic> json) {
+    json.forEach((key, value) {
+      if (value is String) {
+        value = "'$value'";
+      }
+      sql = sql.replaceAll("[[$key]]", "$value");
+    });
+    return sql;
+  }
 }
