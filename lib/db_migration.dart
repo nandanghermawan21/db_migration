@@ -128,7 +128,7 @@ class Databases {
     }
   }
 
-  String remapQueryFromJsonToSql(String sql, Map<String, dynamic> json) {
+  static String remapQueryFromJsonToSql(String sql, Map<String, dynamic> json) {
     json.forEach((key, value) {
       if (value is String) {
         value = "'$value'";
