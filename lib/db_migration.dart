@@ -133,7 +133,7 @@ class Databases {
       if (value is String) {
         value = "'$value'";
       }
-      sql = sql.replaceAll("[[$key]]", "$value");
+      sql = sql.replaceAll("[[$key]]", "${value ?? "NULL"}");
     });
     return sql;
   }
