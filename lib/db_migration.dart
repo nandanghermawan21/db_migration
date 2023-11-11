@@ -130,11 +130,9 @@ class Databases {
 
   static String remapQueryFromJsonToSql(String sql, Map<String, dynamic> json) {
     json.forEach((key, value) {
-      if (value is String) {
+      if (value is String? || value is String) {
+        value = value?.replaceAll("'", "''");
         value = "'$value'";
-      }
-      if (value != null && value != "" && value is String) {
-        value = value.replaceAll("'", "''");
       }
       sql = sql.replaceAll("[[$key]]", "${value ?? "NULL"}");
     });
